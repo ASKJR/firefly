@@ -49,7 +49,7 @@ class Vagalume implements VagalumeInterface
 			}
 		}
 
-		return [];
+		return json_encode([]);
 	}
 
 	/**

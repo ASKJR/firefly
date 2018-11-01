@@ -1,0 +1,30 @@
+#lyricContent h1 {
+    font-size: 2rem;
+}
+#lyricContent h2 {
+    font-size: 1rem;
+}
+#lyricContent h1, #lyricContent h2 {
+    font-weight: 500;
+    margin-bottom: 3px;
+    margin: 0;
+    padding: 0;
+}
+
+a:hover {
+    color: #0AD;
+}
+
+#lyricContent a {
+	text-decoration: none;
+}
+
+#lyricContent p {
+	white-space: pre-line;
+}
+
+#lyrics {
+    margin-top: 5px;
+    font-size: 1.2rem;
+    line-height: 1.7rem;
+}
