@@ -6,17 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Song extends Model
 {
-	protected $fillable = ['playlist_id','name','artist','lyrics'];
+	protected $fillable = ['name','artist','lyrics'];
 
-	public function playlist()
+	public function playlists()
 	{
-		return $this->belongsTo('\App\Playlist');
+		return $this->belongsToMany('\App\Playlist');
 	}
 
-	public function scopeByPlaylistIdSongNameArtist($query,$playlistId,$songName,$artistName)
+	public function scopeByNameArtist($query,$songName,$artistName)
 	{
-		return $query->where('playlist_id',$playlistId)
-					 ->where('name',$songName)
+		return $query->where('name',$songName)
 					 ->where('artist',$artistName);
 	}
 }

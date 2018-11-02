@@ -25,6 +25,12 @@ class PlaylistSongController extends Controller
     	return json_encode($song);
     }
 
+    /**
+     * ajaxStore: 
+     * 1) Insert a  new (unique) song in the database.
+     * 2) Insert in the user's playlist the newest song.
+     * @return JSON
+     */
     public function ajaxStore()
     {
     	$data = request()->validate([
@@ -34,14 +40,26 @@ class PlaylistSongController extends Controller
     		'lyrics'=> 'required'
     	]);
 
-    	$song = Song::ByPlaylistIdSongNameArtist($data['playlist_id'],$data['name'],$data['artist']);
-    	
-    	if (!empty($song->first())) {
-    		return json_encode(['error' => 'Essa música já foi adicionada na sua playlist.']);
+        $playlist = Playlist::findOrFail($data['playlist_id']);
+    	$song = Song::ByNameArtist($data['name'],$data['artist'])->first();
+
+    	//Insert a new song in database, if does not exist already
+        if (empty($song)) {
+            unset($data['playlist_id']);
+    		$song = Song::create($data);
     	}
+        //get an array with songIds from user's playlist
+        $playlistSongIds = $playlist->songs->map->id->toArray();
 
-    	Song::create($data);
-
-    	return json_encode(['success' => 'A música foi salva com sucesso na sua playlist :)']);
+        //song doest no exist in user playlist
+        if (!in_array($song->id, $playlistSongIds)) {
+            //insert in the pivot table (playlist_song)
+            $playlist->songs()->attach($song->id);
+            return json_encode(['success' => 'A música foi salva com sucesso na sua playlist :)']);
+        }
+        //songs already exists in user's playlist
+        else {
+            return json_encode(['error' => 'Essa música já foi adicionada na sua playlist.']);
+        }
     }
 }
