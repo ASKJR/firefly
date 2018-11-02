@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Playlist;
 use Illuminate\Http\Request;
+use Auth;
 
 class PlaylistController extends Controller
 {
@@ -15,7 +16,7 @@ class PlaylistController extends Controller
      */
     public function index()
     {
-        $playlists = Playlist::all();
+        $playlists = Auth::user()->playlists;
 
         return view('playlists.index',compact('playlists'));
     }
@@ -41,9 +42,11 @@ class PlaylistController extends Controller
         $validate = request()->validate([
            'name' => 'required|max:255|min:3'
         ]);
-       
+
+        $validate['user_id'] = Auth::id();
+
         Playlist::create($validate);
-        
+
         return redirect('/playlists');
     }
 

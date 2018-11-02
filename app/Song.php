@@ -12,4 +12,11 @@ class Song extends Model
 	{
 		return $this->belongsTo('\App\Playlist');
 	}
+
+	public function scopeByPlaylistIdSongNameArtist($query,$playlistId,$songName,$artistName)
+	{
+		return $query->where('playlist_id',$playlistId)
+					 ->where('name',$songName)
+					 ->where('artist',$artistName);
+	}
 }

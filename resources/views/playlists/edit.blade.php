@@ -39,12 +39,20 @@
 				<button type="submit" class="btn btn-primary">Buscar</button>
 			</form>
 		</div>
-		<div class="col-md-9" id="lyricContent">
-			<h1 id="songTitle"></h1>
-			<h2 id="singerName"></h2>
-			<br>
-			<div id="lyrics">
-				<p id="lyricsText"></p>
+		<div class="col-md-9">
+			<div class="row btnAddPlaylist" style="display: none;">
+				<a href="#" class="btn btn-sm btn-success" id="addPlaylist">+ Adicionar na playlist</a>
+			</div>
+			<div id="lyricContent">
+				<div class="row">
+					<h1 id="songTitle"></h1>	
+				</div>
+				<div class="row">
+					<h2 id="singerName"></h2>
+				</div>
+				<div  class="row "id="lyrics">
+					<p id="lyricsText"></p>	
+				</div>
 			</div>
 		</div>
 	</div>
@@ -52,6 +60,8 @@
 @section('own_js')
 	<script type="text/javascript">
 		$(document).ready(function(){
+			let song = null;
+
 			$("#searchSongForm").submit(function(e) {
 	    		
 	    		var form = $(this);
@@ -64,11 +74,12 @@
 		            data: form.serialize(),
 		            success: function(data)
 		            {
-		            	data = JSON.parse(data);
+		            	song = JSON.parse(data);
 
 		            	//song_not_found
-		            	if (data.length == 0) {
-		            		$('#lyricContent > h1,h2,p').empty();
+		            	if (song.length == 0) {
+		            		hideLyric();
+		            		song = null;
 		            		swal({
 								type: 'error',
 								title: 'Oops...',
@@ -76,15 +87,60 @@
 							})
 						//song_found
 		            	} else {
-		            		$('#songTitle').text(data.song);
-		            		$('#singerName').html('<a href="#">'+ data.artist + '</a>');
-		            		$('#lyricsText').text(data.lyrics);
-		            		console.log(data.lyrics);
+		            		$('.btnAddPlaylist').show();
+		            		$('#songTitle').text(song.song);
+		            		$('#singerName').html('<a href="#">'+ song.artist + '</a>');
+		            		$('#lyricsText').text(song.lyrics);
 		            	}
 		            }
 	         	});
 			    e.preventDefault(); // avoid to execute the actual submit of the form.
 			});
+
+			$('#addPlaylist').click(function(e){
+				if (song != null) {
+					$.ajaxSetup({
+  						headers: {
+    						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+  						}
+					});
+				    $.ajax({
+			            type: "POST",
+			            url: "/playlistsong",
+			            dataType:"json",
+			            data: {
+			            	'playlist_id': {{ $playlist->id }},
+			            	'name': song.song,
+			            	'artist': song.artist,
+			            	'lyrics': song.lyrics
+			            },
+			            success: function(data)
+			            {
+			            	if (data.success) {
+			            		swal({
+									type: 'success',
+									title: data.success,
+								})
+								hideLyric();
+			            	}
+			            	else {
+			            		swal({
+									type: 'error',
+									title: 'Oops...',
+									text: data.error
+								})
+								hideLyric();
+			            	}
+			            }
+		         	});
+	         	}
+			});
 		});
+
+		function hideLyric()
+		{
+			$('#lyricContent div > *').empty();
+		    $('.btnAddPlaylist').hide();        	
+		}
 	</script>
 @endsection
