@@ -98,8 +98,12 @@ class PlaylistController extends Controller
      */
     public function destroy(Playlist $playlist)
     {
-        $playlist->delete();
-
-        return redirect('/playlists');
+        if (Auth::user()->id == $playlist->user_id) {
+            $playlist->delete();
+            return json_encode(['success'=>'Playlist excluída com sucesso.']);
+        }
+        else {
+            return json_encode(['error'=>'Não foi possível excluir essa playlist.']);   
+        }
     }
 }

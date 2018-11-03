@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@section('own_css')
+  <link href="{{ asset('css/song.css') }}" rel="stylesheet">
+@endsection
 @section('view-heading')
 	{{ $playlist->name }}
 @endsection
@@ -16,21 +19,16 @@
       				</h4>
     			</div>
     			<div id="collapse{{ $song->id }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ $song->id }}">
-      				<div class="panel-body" style="white-space: pre-line;">
-        				{{ $song->lyrics }}
+      				<div class="panel-body">
+                        <div id="lyricContent">
+                            <div id="lyrics">
+                                <p> {{ $song->lyrics }} </p>
+                            </div>
+                        </div>
       				</div>
     			</div>
   			</div>
   		</div>
 	@endforeach
 	<a href="/playlists/{{ $playlist->id }}/edit" class="btn btn-sm btn-primary">Editar</a>	
-	
-	{{-- <div class="col-md-1">
-		<form action="/playlists/{{ $playlist->id }}" method="POST" role="form">
-			@method('DELETE')
-			@csrf
-			<button type="submit" class="btn btn-sm btn-danger">Excluir</button>
-		</form>
-	</div> --}}
-
 @endsection
