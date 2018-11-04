@@ -23,5 +23,6 @@ Route::group(['middleware' => 'auth'], function()
 	Route::get('/home', 'HomeController@index')->name('home');
 	Route::resource('playlists','PlaylistController');
 	Route::post('/playlistsong/ajax/search','PlaylistSongController@ajaxSearchSong');
-	Route::post('/playlistsong','PlaylistSongController@ajaxStore');      
+	Route::post('/playlistsong','PlaylistSongController@ajaxStore'); 
+	Route::delete('/playlistsong/ajax/remove-song','PlaylistSongController@removeSongFromPlaylist');     
 });

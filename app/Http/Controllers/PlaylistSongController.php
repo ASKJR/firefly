@@ -62,4 +62,26 @@ class PlaylistSongController extends Controller
             return json_encode(['error' => 'Essa música já foi adicionada na sua playlist.']);
         }
     }
+
+    /**
+     * @return JSON
+     */
+    public function removeSongFromPlaylist()
+    {
+        $data = request()->validate([
+            'playlist_id' => 'required',
+            'song_id' => 'required'
+        ]);
+
+        $playlist = Playlist::findOrFail($data['playlist_id']);
+        
+        //removing a song from playlist.. removing data from pivot table (PlaylistSong) 
+        if ($playlist->songs()->detach($data['song_id'])) {
+            return json_encode(['success' => 'Música removida com sucesso da playlist:)']);
+        }
+        //not possible to remove song from playlist    
+        else {
+            return json_encode(['error' => 'Não foi possível remover essa música da playlist.']);
+        }
+    }
 }
